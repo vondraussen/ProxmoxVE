@@ -226,6 +226,7 @@ base_settings() {
   TAGS="community-script;${var_tags:-}"
   ENABLE_FUSE=${var_fuse:-"${1:-no}"}
   ENABLE_TUN=${var_tun:-"${1:-no}"}
+  USE_HOST_PROXY=${var_host_proxy:-"${1:-no}"}
 
   # Since these 2 are only defined outside of default_settings function, we add a temporary fallback. TODO: To align everything, we should add these as constant variables (e.g. OSTYPE and OSVERSION), but that would currently require updating the default_settings function for all existing scripts
   if [ -z "$var_os" ]; then
@@ -284,6 +285,7 @@ SSH_AUTHORIZED_KEY="${SSH_AUTHORIZED_KEY}"
 TAGS="${TAGS:-none}"
 ENABLE_FUSE="$ENABLE_FUSE"
 ENABLE_TUN="$ENABLE_TUN"
+USE_HOST_PROXY="$USE_HOST_PROXY"
 EOF
 
       echo -e "${INFO}${BOLD}${GN}Writing configuration to ${FILEPATH}${CL}"
@@ -322,6 +324,7 @@ SSH_AUTHORIZED_KEY="${SSH_AUTHORIZED_KEY}"
 TAGS="${TAGS:-none}"
 ENABLE_FUSE="$ENABLE_FUSE"
 ENABLE_TUN="$ENABLE_TUN"
+USE_HOST_PROXY="$USE_HOST_PROXY"
 EOF
         echo -e "${INFO}${BOLD}${GN}Writing configuration to ${FILEPATH}${CL}"
       else
@@ -1132,6 +1135,7 @@ build_container() {
   export CTTYPE="$CT_TYPE"
   export ENABLE_FUSE="$ENABLE_FUSE"
   export ENABLE_TUN="$ENABLE_TUN"
+  export USE_HOST_PROXY="$USE_HOST_PROXY"
   export PCT_OSTYPE="$var_os"
   export PCT_OSVERSION="$var_version"
   export PCT_DISK_SIZE="$DISK_SIZE"
@@ -1249,6 +1253,17 @@ EOF
     cat <<EOF >>"$LXC_CONFIG"
 lxc.cgroup2.devices.allow: c 10:200 rwm
 lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
+EOF
+  fi
+
+  # Proxy settings
+  if [ "$USE_HOST_PROXY" == "yes" ]; then
+    cat <<EOF >>"$LXC_CONFIG"
+# Proxy Settings
+lxc.environment = http_proxy="${http_proxy}"
+lxc.environment = https_proxy="${http_proxy}"
+lxc.environment = ftp_proxy="${http_proxy}"
+lxc.environment = no_proxy="${no_proxy}"
 EOF
   fi
 

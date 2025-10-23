@@ -670,6 +670,24 @@ config_file() {
     echo -e "${FUSE}${BOLD}${DGN}Enable TUN: ${BGN}$ENABLE_TUN${CL}"
   fi
 
+  if [[ -n "$USE_HOST_PROXY" ]]; then
+    if [[ "$USE_HOST_PROXY" == "yes" ]]; then
+      echo -e "${PROXY}${BOLD}${DGN}Use Host Proxy: ${BGN}Yes${CL}"
+    elif [[ "$USE_HOST_PROXY" == "no" ]]; then
+      echo -e "${PROXY}${BOLD}${DGN}Use Host Proxy: ${BGN}No${CL}"
+    else
+      msg_error "Use Host Proxy needs to be 'yes' or 'no', was ${USE_HOST_PROXY}"
+      exit
+    fi
+  else
+    if (whiptail --backtitle "Proxmox VE Helper Scripts" --defaultno --title "Use Host Proxy" --yesno "Use Host Proxy?" 10 58); then
+      USE_HOST_PROXY="yes"
+    else
+      USE_HOST_PROXY="no"
+    fi
+    echo -e "${PROXY}${BOLD}${DGN}Use Host Proxy: ${BGN}$USE_HOST_PROXY${CL}"
+  fi
+
   if [[ -n "${VERBOSE-}" ]]; then
     if [[ "$VERBOSE" == "yes" ]]; then
       echo -e "${SEARCH}${BOLD}${DGN}Verbose Mode: ${BGN}$VERBOSE${CL}"
