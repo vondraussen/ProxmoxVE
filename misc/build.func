@@ -804,6 +804,13 @@ advanced_settings() {
   fi
   echo -e "${FUSE}${BOLD}${DGN}Enable FUSE Support: ${BGN}$ENABLE_FUSE${CL}"
 
+  if (whiptail --backtitle "Proxmox VE Helper Scripts" --defaultno --title "Use Host Proxy" --yesno "Use Host Proxy?\nIf you are behind a cooperate proxy server." 10 58); then
+    USE_HOST_PROXY="yes"
+  else
+    USE_HOST_PROXY="no"
+  fi
+  echo -e "${FUSE}${BOLD}${DGN}Use Host Proxy: ${BGN}$USE_HOST_PROXY${CL}"
+
   if (whiptail --backtitle "Proxmox VE Helper Scripts" --defaultno --title "VERBOSE MODE" --yesno "Enable Verbose Mode?" 10 58); then
     VERBOSE="yes"
   else
