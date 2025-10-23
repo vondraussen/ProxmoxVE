@@ -1095,6 +1095,13 @@ start() {
 build_container() {
   #  if [ "$VERBOSE" == "yes" ]; then set -x; fi
 
+  HOST_PROXY_IP=$(ip addr show vmbr0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)
+  PROXY_PORT="3128" # fixed for now
+  if [ -z "$HOST_PROXY_IP" ]; then
+    echo "ERROR: Could not find IP address for vmbr0. Exiting." >&2
+    exit 1
+  fi
+
   NET_STRING="-net0 name=eth0,bridge=$BRG$MAC,ip=$NET$GATE$VLAN$MTU"
   case "$IPV6_METHOD" in
   auto) NET_STRING="$NET_STRING,ip6=auto" ;;
@@ -1267,10 +1274,11 @@ EOF
   if [ "$USE_HOST_PROXY" == "yes" ]; then
     cat <<EOF >>"$LXC_CONFIG"
 # Proxy Settings
-lxc.environment = http_proxy="${http_proxy}"
-lxc.environment = https_proxy="${http_proxy}"
-lxc.environment = ftp_proxy="${http_proxy}"
+lxc.environment = http_proxy="http://${HOST_PROXY_IP}:${PROXY_PORT}/"
+lxc.environment = https_proxy="http://${HOST_PROXY_IP}:${PROXY_PORT}/"
+lxc.environment = ftp_proxy="http://${HOST_PROXY_IP}:${PROXY_PORT}/"
 lxc.environment = no_proxy="${no_proxy}"
+EOF
 EOF
   fi
 
