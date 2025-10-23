@@ -1273,7 +1273,6 @@ EOF
   # Proxy settings
   if [ "$USE_HOST_PROXY" == "yes" ]; then
     cat <<EOF >>"$LXC_CONFIG"
-# Proxy Settings
 lxc.environment = http_proxy=http://${HOST_PROXY_IP}:${PROXY_PORT}/
 lxc.environment = https_proxy=http://${HOST_PROXY_IP}:${PROXY_PORT}/
 lxc.environment = ftp_proxy=http://${HOST_PROXY_IP}:${PROXY_PORT}/
