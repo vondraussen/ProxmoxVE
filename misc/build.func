@@ -1279,7 +1279,6 @@ lxc.environment = https_proxy="http://${HOST_PROXY_IP}:${PROXY_PORT}/"
 lxc.environment = ftp_proxy="http://${HOST_PROXY_IP}:${PROXY_PORT}/"
 lxc.environment = no_proxy="${no_proxy}"
 EOF
-EOF
   fi
 
   # This starts the container and executes <app>-install.sh
